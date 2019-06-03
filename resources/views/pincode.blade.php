@@ -293,3 +293,58 @@
     });
 
 </script>
+
+
+
+<script type="text/javascript">
+window.query = '<?php echo !empty($_GET['query']) ? $_GET['query'] : ' '; ?>';
+window.key = '<?php echo !empty($_GET['key']) ? $_GET['key'] : ' '; ?>';
+$('.btnv').click(function(){
+     $('#keysearch').val("");
+     window.key = "";
+     window.query = $(this). attr("value");
+     var page = 1;
+     var key = window.key;
+     fetch_data(page, query, key);
+});
+
+$('#keysearch').keypress(function(e) {
+    var keycode = e.keyCode || e.which;
+    window.key = $('#keysearch').val();
+    if(key != " ")
+    {
+        key = window.key;
+        var query = key;
+        var page = 1;
+        if(keycode == '13') {
+             fetch_data(page, query, key);
+        }
+    }
+    else 
+    {
+       alert('Please enter some text');
+    }
+});
+$(document).on('click', '.pagination a', function(e){
+   e.preventDefault(); 
+   $('li').removeClass('active');
+   $(this).parent('li').addClass('active');  
+   var myurl = $(this).attr('href');
+   var page = $(this).attr('href').split('page=')[1];
+   var query = window.query; 
+   var key = window.key;
+   fetch_data(page, query, key);
+});
+
+function fetch_data(page, query,key)
+{
+  $.ajax({
+    url:"/modules/employees-directory/employee-directory-list/?page="+page+"&query="+query+"&key="+key,
+  }).done(function(data){
+    $("#tag_container").html(data);
+     location.hash = page;
+  }).fail(function(jqXHR, ajaxOptions, thrownError){
+     alert('No response from server');
+    });
+ }
+</script>
